@@ -304,6 +304,37 @@
   .board-opt:hover{background:var(--paper);}
   .board-opt .sw{width:34px;height:34px;border-radius:8px;flex-shrink:0;}
 
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input{
+    width:100%;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 12px;font-size:14px;
+    font-family:'Inter',sans-serif;color:var(--ink);outline:none;
+  }
+  .field input:focus{border-color:var(--moss);box-shadow:0 0 0 3px rgba(63,93,78,0.12);}
+  .form-error{font-size:12.5px;color:var(--rose);margin:-6px 0 12px;}
+  .auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--paper);border-radius:10px;padding:4px;}
+  .auth-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink-soft);}
+  .auth-tab.active{background:var(--paper-raised);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,0.06);}
+  .auth-submit{width:100%;background:var(--moss);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;margin-top:4px;}
+  .auth-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;}
+  .auth-hint a{color:var(--moss);font-weight:600;}
+
+  #authArea{position:relative;}
+  .login-btn{background:var(--moss);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:600;}
+  .account-btn{display:flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 5px;}
+  .account-btn:hover{background:var(--paper-raised);}
+  .account-name{font-size:13px;font-weight:500;}
+  .account-menu{
+    position:absolute;top:48px;right:0;background:var(--paper-raised);
+    border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;min-width:150px;
+    display:none;z-index:50;
+  }
+  .account-menu.open{display:block;}
+  .account-menu button{width:100%;text-align:left;padding:9px 10px;border:none;background:transparent;border-radius:8px;font-size:13.5px;}
+  .account-menu button:hover{background:var(--paper);}
+
   .toast{
     position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:var(--paper);
@@ -336,7 +367,7 @@
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         <span class="saved-badge" id="savedCount" style="display:none;">0</span>
       </button>
-      <div class="avatar">JM</div>
+      <div id="authArea"></div>
     </div>
   </div>
   <div class="rail" id="rail"></div>
@@ -359,6 +390,16 @@
   <div class="sheet">
     <h3>Save to board</h3>
     <div id="boardList"></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="authBackdrop">
+  <div class="sheet" style="max-width:360px;">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin">Log in</button>
+      <button class="auth-tab" id="tabSignup">Sign up</button>
+    </div>
+    <div id="authForm"></div>
   </div>
 </div>
 
@@ -441,6 +482,155 @@ pins = shuffle(pins);
 let activeCat = "All";
 let query = "";
 let activePinForBoard = null;
+let currentUser = null;
+let authMode = 'login';
+
+async function hashPw(pw){
+  const enc = new TextEncoder().encode('drift-'+pw);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function renderAuthArea(){
+  const area = document.getElementById('authArea');
+  if(currentUser){
+    area.innerHTML = `
+      <button class="account-btn" id="accountBtn">
+        <div class="avatar" style="width:26px;height:26px;font-size:10px;">${currentUser.slice(0,2).toUpperCase()}</div>
+        <span class="account-name">${currentUser}</span>
+      </button>
+      <div class="account-menu" id="accountMenu">
+        <button id="logoutBtn">Log out</button>
+      </div>
+    `;
+    document.getElementById('accountBtn').onclick = ()=> document.getElementById('accountMenu').classList.toggle('open');
+    document.getElementById('logoutBtn').onclick = logOut;
+  } else {
+    area.innerHTML = `<button class="login-btn" id="loginBtn">Log in</button>`;
+    document.getElementById('loginBtn').onclick = ()=> openAuthSheet('login');
+  }
+}
+document.addEventListener('click', e=>{
+  const menu = document.getElementById('accountMenu');
+  if(menu && !e.target.closest('#authArea')) menu.classList.remove('open');
+});
+
+function openAuthSheet(mode){
+  authMode = mode;
+  document.getElementById('tabLogin').classList.toggle('active', mode==='login');
+  document.getElementById('tabSignup').classList.toggle('active', mode==='signup');
+  renderAuthForm();
+  document.getElementById('authBackdrop').classList.add('open');
+}
+document.getElementById('tabLogin').onclick = ()=> openAuthSheet('login');
+document.getElementById('tabSignup').onclick = ()=> openAuthSheet('signup');
+document.getElementById('authBackdrop').addEventListener('click', e=>{
+  if(e.target.id==='authBackdrop') document.getElementById('authBackdrop').classList.remove('open');
+});
+
+function renderAuthForm(){
+  const form = document.getElementById('authForm');
+  if(authMode==='login'){
+    form.innerHTML = `
+      <div class="field"><label>Username</label><input type="text" id="loginUser" placeholder="yourname"></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="Enter your password"></div>
+      <div class="form-error" id="authError" style="display:none;"></div>
+      <button class="auth-submit" id="authSubmit">Log in</button>
+      <p class="auth-hint">New here? <a href="#" id="toSignup">Create an account</a></p>
+    `;
+    document.getElementById('toSignup').onclick = (e)=>{ e.preventDefault(); openAuthSheet('signup'); };
+    document.getElementById('authSubmit').onclick = doLogin;
+  } else {
+    form.innerHTML = `
+      <div class="field"><label>Username</label><input type="text" id="suUser" placeholder="Pick a username"></div>
+      <div class="field"><label>Password</label><input type="password" id="suPass" placeholder="At least 6 characters"></div>
+      <div class="field"><label>Confirm password</label><input type="password" id="suPass2" placeholder="Type it again"></div>
+      <div class="form-error" id="authError" style="display:none;"></div>
+      <button class="auth-submit" id="authSubmit">Create account</button>
+      <p class="auth-hint">Already have an account? <a href="#" id="toLogin">Log in</a></p>
+    `;
+    document.getElementById('toLogin').onclick = (e)=>{ e.preventDefault(); openAuthSheet('login'); };
+    document.getElementById('authSubmit').onclick = doSignup;
+  }
+}
+
+function showAuthError(msg){
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function doLogin(){
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if(!user || !pass){ showAuthError('Enter a username and password.'); return; }
+  try{
+    const rec = await window.storage.get('users:'+user.toLowerCase(), true);
+    const data = JSON.parse(rec.value);
+    const hash = await hashPw(pass);
+    if(hash !== data.passwordHash){ showAuthError('Wrong password. Try again.'); return; }
+    await establishSession(data.username);
+  } catch(err){
+    showAuthError("That username isn't registered yet.");
+  }
+}
+
+async function doSignup(){
+  const user = document.getElementById('suUser').value.trim();
+  const pass = document.getElementById('suPass').value;
+  const pass2 = document.getElementById('suPass2').value;
+  if(user.length < 3){ showAuthError('Pick a username with at least 3 characters.'); return; }
+  if(!/^[a-zA-Z0-9_]+$/.test(user)){ showAuthError('Letters, numbers, and underscores only.'); return; }
+  if(pass.length < 6){ showAuthError('Use a password with at least 6 characters.'); return; }
+  if(pass !== pass2){ showAuthError("Passwords don't match."); return; }
+  try{
+    let taken = true;
+    try{ await window.storage.get('users:'+user.toLowerCase(), true); } catch(e){ taken = false; }
+    if(taken){ showAuthError('That username is taken. Try another.'); return; }
+    const passwordHash = await hashPw(pass);
+    await window.storage.set('users:'+user.toLowerCase(), JSON.stringify({username:user, passwordHash}), true);
+    await establishSession(user);
+  } catch(err){
+    showAuthError("Couldn't create the account. Try again.");
+  }
+}
+
+async function establishSession(username){
+  currentUser = username;
+  try{ await window.storage.set('session', username, false); }catch(e){}
+  document.getElementById('authBackdrop').classList.remove('open');
+  renderAuthArea();
+  showToast(`Welcome, ${username}`);
+  await loadUserSaves();
+  render();
+  updateSavedCount();
+}
+
+async function logOut(){
+  currentUser = null;
+  try{ await window.storage.delete('session', false); }catch(e){}
+  pins.forEach(p=>{ p.saved=false; p.board=null; });
+  renderAuthArea();
+  render();
+  updateSavedCount();
+  showToast('Logged out');
+}
+
+async function loadUserSaves(){
+  if(!currentUser) return;
+  try{
+    const rec = await window.storage.get('saves:'+currentUser.toLowerCase(), false);
+    const map = JSON.parse(rec.value);
+    pins.forEach(p=>{ if(map[p.id]){ p.saved=true; p.board=map[p.id]; } });
+  } catch(e){ /* no saves yet for this account */ }
+}
+
+async function persistSaves(){
+  if(!currentUser) return;
+  const map = {};
+  pins.forEach(p=>{ if(p.saved) map[p.id]=p.board; });
+  try{ await window.storage.set('saves:'+currentUser.toLowerCase(), JSON.stringify(map), false); }catch(e){}
+}
 
 const rail = document.getElementById('rail');
 CATEGORIES.forEach(c=>{
@@ -535,6 +725,11 @@ document.getElementById('lightbox').addEventListener('click', e=>{
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
 
 function openBoardSheet(id){
+  if(!currentUser){
+    showToast('Log in to save pins');
+    openAuthSheet('login');
+    return;
+  }
   activePinForBoard = id;
   const list = document.getElementById('boardList');
   list.innerHTML = '';
@@ -560,6 +755,7 @@ function saveToBoard(boardName){
   render();
   if(document.getElementById('lightbox').classList.contains('open')) openLightbox(p.id);
   updateSavedCount();
+  persistSaves();
 }
 
 function updateSavedCount(){
@@ -578,6 +774,11 @@ function showToast(msg){
 }
 
 document.getElementById('savedBtn').onclick = ()=>{
+  if(!currentUser){
+    showToast('Log in to see your saved pins');
+    openAuthSheet('login');
+    return;
+  }
   activeCat = "All";
   document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
   rail.children[0].classList.add('active');
@@ -603,7 +804,21 @@ document.getElementById('savedBtn').onclick = ()=>{
   });
 };
 
-render();
+async function init(){
+  render();
+  renderAuthArea();
+  try{
+    const rec = await window.storage.get('session', false);
+    if(rec && rec.value){
+      currentUser = rec.value;
+      await loadUserSaves();
+      render();
+      renderAuthArea();
+    }
+  } catch(e){ /* no session yet, stays logged out */ }
+  updateSavedCount();
+}
+init();
 </script>
 </body>
 </html>
