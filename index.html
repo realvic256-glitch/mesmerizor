@@ -100,3 +100,510 @@
     padding:0 3px;
   }
   .avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--moss);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+    flex-shrink:0;
+  }
+
+  .rail{
+    max-width:1400px;margin:0 auto;
+    display:flex;gap:8px;overflow-x:auto;
+    padding:14px 28px 16px;
+    scrollbar-width:none;
+  }
+  .rail::-webkit-scrollbar{display:none;}
+  .chip{
+    flex-shrink:0;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    font-size:13px;font-weight:500;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .chip.active{
+    background:var(--moss);
+    border-color:var(--moss);
+    color:#fff;
+  }
+
+  .hero{
+    max-width:1400px;margin:0 auto;
+    padding:6px 28px 28px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:32px;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .hero p{
+    margin:0;color:var(--ink-soft);font-size:14.5px;
+  }
+
+  main{max-width:1400px;margin:0 auto;padding:0 22px 80px;}
+  .grid{
+    column-gap:14px;
+    column-count:2;
+  }
+  @media(min-width:560px){.grid{column-count:3;}}
+  @media(min-width:820px){.grid{column-count:4;}}
+  @media(min-width:1100px){.grid{column-count:5;}}
+  @media(min-width:1340px){.grid{column-count:6;}}
+
+  .pin{
+    break-inside:avoid;
+    margin-bottom:14px;
+    border-radius:16px;
+    overflow:hidden;
+    position:relative;
+    background:var(--paper-raised);
+    cursor:pointer;
+    border:1px solid var(--line);
+  }
+  .pin img{
+    width:100%;display:block;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .pin:hover img{transform:scale(1.04);}
+
+  .pin-mark{
+    position:absolute;top:10px;left:10px;
+    width:22px;height:22px;border-radius:50%;
+    background:rgba(250,248,243,0.9);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transform:translateY(-4px);
+    transition:all .18s ease;
+    box-shadow:0 1px 3px rgba(0,0,0,0.15);
+  }
+  .pin:hover .pin-mark{opacity:1;transform:translateY(0);}
+
+  .pin-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(33,31,27,0.32) 0%, transparent 26%, transparent 68%, rgba(33,31,27,0.5) 100%);
+    opacity:0;transition:opacity .18s ease;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:10px;
+  }
+  .pin:hover .pin-overlay{opacity:1;}
+
+  .pin-top{display:flex;justify-content:flex-end;}
+  .save-btn{
+    background:var(--moss);color:#fff;
+    border:none;border-radius:999px;
+    padding:8px 16px;font-size:13px;font-weight:600;
+    transform:translateY(-4px);opacity:0;
+    transition:all .18s ease;
+  }
+  .pin:hover .save-btn{transform:translateY(0);opacity:1;}
+  .save-btn.saved{background:var(--rose);}
+  .save-btn.saved::after{content:" ✓";}
+
+  .pin-bottom{
+    display:flex;align-items:center;justify-content:space-between;
+    transform:translateY(6px);opacity:0;
+    transition:all .18s ease;
+  }
+  .pin:hover .pin-bottom{transform:translateY(0);opacity:1;}
+  .pin-title{
+    color:#fff;font-size:13px;font-weight:500;
+    text-shadow:0 1px 3px rgba(0,0,0,0.4);
+    max-width:78%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .pin-more{
+    width:28px;height:28px;border-radius:50%;
+    background:rgba(250,248,243,0.92);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+
+  .lightbox{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(33,31,27,0.66);
+    backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;
+    padding:32px;
+  }
+  .lightbox.open{display:flex;}
+  .lb-card{
+    background:var(--paper-raised);
+    border-radius:22px;
+    max-width:920px;width:100%;
+    max-height:88vh;
+    display:flex;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  }
+  .lb-img{
+    flex:1.3;min-width:0;background:#000;
+    display:flex;align-items:center;
+  }
+  .lb-img img{width:100%;display:block;max-height:88vh;object-fit:cover;}
+  .lb-info{
+    flex:1;min-width:280px;
+    padding:26px 26px 24px;
+    display:flex;flex-direction:column;
+    overflow-y:auto;
+  }
+  .lb-close{
+    align-self:flex-end;
+    width:32px;height:32px;border-radius:50%;
+    background:var(--paper);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;flex-shrink:0;
+  }
+  .lb-tag{
+    font-family:'Space Mono',monospace;
+    font-size:11px;text-transform:uppercase;letter-spacing:0.06em;
+    color:var(--moss);margin-bottom:10px;
+  }
+  .lb-title{
+    font-family:'Fraunces',serif;font-weight:500;
+    font-size:24px;line-height:1.25;margin:0 0 14px;
+  }
+  .lb-author{
+    display:flex;align-items:center;gap:10px;margin-bottom:20px;
+  }
+  .lb-author .avatar{width:30px;height:30px;font-size:11px;}
+  .lb-author span{font-size:13.5px;color:var(--ink-soft);}
+  .lb-save-row{display:flex;gap:10px;margin-top:auto;padding-top:16px;}
+  .lb-save-btn{
+    flex:1;background:var(--moss);color:#fff;border:none;
+    border-radius:12px;padding:13px;font-size:14px;font-weight:600;
+    transition:background .15s ease;
+  }
+  .lb-save-btn.saved{background:var(--rose);}
+  .lb-share-btn{
+    width:46px;border-radius:12px;border:1px solid var(--line);
+    background:transparent;display:flex;align-items:center;justify-content:center;
+  }
+
+  .sheet-backdrop{
+    position:fixed;inset:0;z-index:110;background:rgba(33,31,27,0.4);
+    display:none;align-items:flex-end;justify-content:center;
+  }
+  @media(min-width:600px){.sheet-backdrop{align-items:center;}}
+  .sheet-backdrop.open{display:flex;}
+  .sheet{
+    background:var(--paper-raised);width:100%;max-width:340px;
+    border-radius:20px 20px 0 0;padding:18px;
+  }
+  @media(min-width:600px){.sheet{border-radius:20px;}}
+  .sheet h3{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:0 0 12px;}
+  .board-opt{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 8px;border-radius:10px;font-size:14px;
+  }
+  .board-opt:hover{background:var(--paper);}
+  .board-opt .sw{width:34px;height:34px;border-radius:8px;flex-shrink:0;}
+
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);
+    padding:12px 22px;border-radius:999px;font-size:13.5px;
+    opacity:0;pointer-events:none;transition:all .25s ease;z-index:120;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .empty{
+    text-align:center;padding:80px 20px;color:var(--ink-soft);
+    grid-column:1/-1;
+  }
+  .empty span{display:block;font-family:'Fraunces',serif;font-style:italic;font-size:20px;color:var(--ink);margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo"><span class="dot"></span>Drift</div>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" type="text" placeholder="Search for interiors, trails, recipes…">
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" aria-label="Notifications">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+      <button class="icon-btn" id="savedBtn" aria-label="Saved pins">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21 12 16l-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span class="saved-badge" id="savedCount" style="display:none;">0</span>
+      </button>
+      <div class="avatar">JM</div>
+    </div>
+  </div>
+  <div class="rail" id="rail"></div>
+</header>
+
+<div class="hero">
+  <h1 id="heroTitle">Ideas worth keeping</h1>
+  <p id="heroSub">Collect the small things that shape a bigger one.</p>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <div class="lb-card" id="lbCard"></div>
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop">
+  <div class="sheet">
+    <h3>Save to board</h3>
+    <div id="boardList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATEGORIES = ["All","Interiors","Travel","Food","Art & design","Nature","Fashion","Architecture"];
+const BOARDS = [
+  {name:"Home ideas", color:"#3F5D4E"},
+  {name:"Someday travel", color:"#5C7C8A"},
+  {name:"Kitchen notebook", color:"#C68A1F"},
+  {name:"Studio mood", color:"#B5717A"}
+];
+
+const SUBJECTS = {
+  "Interiors":["reading nook","kitchen corner","bedroom","living room","hallway","bathroom","home office","entryway","dining nook","stairwell"],
+  "Travel":["coastal town","mountain trail","market street","ferry crossing","cliffside village","desert road","old town square","harbor","alpine hut","train platform"],
+  "Food":["sourdough loaf","lentil soup","citrus salad","market vegetables","breakfast spread","pasta dough","roast chicken","herb garden","coffee pour","cheese board"],
+  "Art & design":["ceramic study","typography poster","ink wash","woven wall hanging","still life","color field","charcoal sketch","clay vessel","print series","paper collage"],
+  "Nature":["fern canopy","tide pool","lichen on granite","garden frost","river bend","wildflower meadow","forest floor","mountain ridge","autumn leaves","morning dew"],
+  "Fashion":["linen layers","leather boots","wool coat","handknit sweater","denim","capsule rack","silk scarf","tailored blazer","canvas tote","wide-leg trousers"],
+  "Architecture":["stair detail","courtyard light well","facade","timber joinery","arched doorway","rooftop line","concrete column","glass atrium","spiral staircase","brick wall"]
+};
+const DESCRIPTORS = {
+  "Interiors":["sunlit","terracotta","plaster-walled","shelved","linen and oak","minimal","warmly lit","concrete-floored","vintage-rugged","morning-lit"],
+  "Travel":["at dusk","in morning light","off season","at the quiet hour","at first light","in the rain","at golden hour","with empty streets","in local color","at midday"],
+  "Food":["fresh baked","slow simmered","hand tossed","market sourced","weeknight","weekend","rustic","seasonal","homemade","just plated"],
+  "Art & design":["glazed","hand drawn","experimental","studio-lit","in progress","finished","monochrome","textured","layered","first draft"],
+  "Nature":["backlit","up close","seen from above","frost touched","in early spring","in late summer","after rain","at golden hour","along a quiet trail","wide open"],
+  "Fashion":["in neutral tones","well worn","in progress","a vintage find","minimally edited","studio shot","street style","a seasonal edit","a closet edit","a texture study"],
+  "Architecture":["brutalist","modernist","minimal","classic","industrial","in natural light","geometric","weathered","clean lined","in shadow"]
+};
+
+const KEYWORDS = {
+  "Interiors":"interior,home,decor",
+  "Travel":"travel,landscape,scenic",
+  "Food":"food,cuisine,dish",
+  "Art & design":"art,painting,design",
+  "Nature":"nature,forest,wildlife",
+  "Fashion":"fashion,style,clothing",
+  "Architecture":"architecture,building"
+};
+
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(((i*9301+49297)%233280)/233280 * (i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+let pins = [];
+let idc = 0;
+const cats = CATEGORIES.slice(1);
+cats.forEach((cat, ci)=>{
+  const subs = SUBJECTS[cat];
+  const descs = DESCRIPTORS[cat];
+  const combos = [];
+  subs.forEach(s=> descs.forEach(d=> combos.push(cap(s)+", "+d)) );
+  const chosen = shuffle(combos.slice()).slice(0,50);
+  chosen.forEach((title, ti)=>{
+    const lock = ci*57 + ti + 7;
+    const heights = [340,420,300,480,380,440,320,400];
+    pins.push({
+      id: idc++,
+      title,
+      category: cat,
+      author: ["R. Quinn","M. Alaoui","S. Petrova","D. Novak","L. Okafor","T. Bergman"][(ci+ti)%6],
+      lock,
+      keyword: KEYWORDS[cat],
+      h: heights[(ci+ti)%heights.length],
+      saved:false, board:null
+    });
+  });
+});
+pins = shuffle(pins);
+
+let activeCat = "All";
+let query = "";
+let activePinForBoard = null;
+
+const rail = document.getElementById('rail');
+CATEGORIES.forEach(c=>{
+  const b = document.createElement('button');
+  b.className = 'chip'+(c==="All"?' active':'');
+  b.textContent = c;
+  b.onclick = ()=>{ activeCat=c; document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); updateHero(); render(); };
+  rail.appendChild(b);
+});
+
+function updateHero(){
+  const h = document.getElementById('heroTitle');
+  const s = document.getElementById('heroSub');
+  if(activeCat==="All"){ h.textContent="Ideas worth keeping"; s.textContent="Collect the small things that shape a bigger one."; }
+  else { h.textContent=activeCat; s.textContent="Pins currently gathering around "+activeCat.toLowerCase()+"."; }
+}
+
+function initials(name){ return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function render(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const filtered = pins.filter(p=>{
+    const matchCat = activeCat==="All" || p.category===activeCat;
+    const matchQ = !query || p.title.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+    return matchCat && matchQ;
+  });
+  if(filtered.length===0){
+    grid.innerHTML = '<div class="empty"><span>Nothing drifted here yet</span>Try another search or category.</div>';
+    return;
+  }
+  filtered.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='pin';
+    el.onclick = (e)=>{ if(!e.target.closest('.save-btn') && !e.target.closest('.pin-more')) openLightbox(p.id); };
+    el.innerHTML = `
+      <img src="https://loremflickr.com/440/${p.h}/${p.keyword}?lock=${p.lock}" alt="${p.title}" loading="lazy">
+      <div class="pin-mark">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--moss)"><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="pin-overlay">
+        <div class="pin-top">
+          <button class="save-btn ${p.saved?'saved':''}" data-id="${p.id}">${p.saved?'Saved':'Save'}</button>
+        </div>
+        <div class="pin-bottom">
+          <span class="pin-title">${p.title}</span>
+          <div class="pin-more" data-id="${p.id}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.4"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </div>
+        </div>
+      </div>
+    `;
+    el.querySelector('.save-btn').onclick = ()=> openBoardSheet(p.id);
+    grid.appendChild(el);
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', e=>{
+  query = e.target.value.trim().toLowerCase();
+  render();
+});
+
+function openLightbox(id){
+  const p = pins.find(x=>x.id===id);
+  const lb = document.getElementById('lightbox');
+  const card = document.getElementById('lbCard');
+  card.innerHTML = `
+    <div class="lb-img"><img src="https://loremflickr.com/800/1000/${p.keyword}?lock=${p.lock}" alt="${p.title}"></div>
+    <div class="lb-info">
+      <button class="lb-close" id="lbClose" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="lb-tag">${p.category}</div>
+      <h2 class="lb-title">${p.title}</h2>
+      <div class="lb-author"><div class="avatar">${initials(p.author)}</div><span>${p.author}</span></div>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.6;">Pinned to Drift from a slow afternoon of looking. Part of an ongoing set on ${p.category.toLowerCase()}.</p>
+      <div class="lb-save-row">
+        <button class="lb-save-btn ${p.saved?'saved':''}" id="lbSaveBtn">${p.saved?'Saved to '+ (p.board||'board') : 'Save'}</button>
+        <button class="lb-share-btn" aria-label="Copy link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+  card.querySelector('#lbClose').onclick = closeLightbox;
+  card.querySelector('#lbSaveBtn').onclick = ()=> openBoardSheet(p.id);
+  lb.classList.add('open');
+}
+document.getElementById('lightbox').addEventListener('click', e=>{
+  if(e.target.id==='lightbox') closeLightbox();
+});
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+
+function openBoardSheet(id){
+  activePinForBoard = id;
+  const list = document.getElementById('boardList');
+  list.innerHTML = '';
+  BOARDS.forEach(b=>{
+    const row = document.createElement('div');
+    row.className='board-opt';
+    row.innerHTML = `<div class="sw" style="background:${b.color}"></div><span>${b.name}</span>`;
+    row.onclick = ()=> saveToBoard(b.name);
+    list.appendChild(row);
+  });
+  document.getElementById('sheetBackdrop').classList.add('open');
+}
+document.getElementById('sheetBackdrop').addEventListener('click', e=>{
+  if(e.target.id==='sheetBackdrop') document.getElementById('sheetBackdrop').classList.remove('open');
+});
+
+function saveToBoard(boardName){
+  const p = pins.find(x=>x.id===activePinForBoard);
+  p.saved = true;
+  p.board = boardName;
+  document.getElementById('sheetBackdrop').classList.remove('open');
+  showToast(`Saved to ${boardName}`);
+  render();
+  if(document.getElementById('lightbox').classList.contains('open')) openLightbox(p.id);
+  updateSavedCount();
+}
+
+function updateSavedCount(){
+  const n = pins.filter(p=>p.saved).length;
+  const badge = document.getElementById('savedCount');
+  badge.textContent = n;
+  badge.style.display = n>0 ? 'flex' : 'none';
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=> t.classList.remove('show'), 2000);
+}
+
+document.getElementById('savedBtn').onclick = ()=>{
+  activeCat = "All";
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+  rail.children[0].classList.add('active');
+  const grid = document.getElementById('grid');
+  const onlySaved = pins.filter(p=>p.saved);
+  document.getElementById('heroTitle').textContent = "Your saved pins";
+  document.getElementById('heroSub').textContent = onlySaved.length ? "Everything you've kept, in one place." : "Nothing saved yet — hover any pin and tap Save.";
+  grid.innerHTML='';
+  if(onlySaved.length===0){
+    grid.innerHTML = '<div class="empty"><span>Your board is empty</span>Save a few pins to see them here.</div>';
+    return;
+  }
+  onlySaved.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='pin';
+    el.onclick = ()=> openLightbox(p.id);
+    el.innerHTML = `<img src="https://loremflickr.com/440/${p.h}/${p.keyword}?lock=${p.lock}" alt="${p.title}" loading="lazy">
+      <div class="pin-overlay" style="opacity:1;background:linear-gradient(180deg, rgba(33,31,27,0.28) 0%, transparent 30%, transparent 70%, rgba(33,31,27,0.5) 100%);">
+        <div class="pin-top"></div>
+        <div class="pin-bottom" style="opacity:1;transform:none;"><span class="pin-title">${p.title}</span></div>
+      </div>`;
+    grid.appendChild(el);
+  });
+};
+
+render();
+</script>
+</body>
+</html>
